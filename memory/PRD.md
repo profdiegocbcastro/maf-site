@@ -32,7 +32,7 @@ Criar um site completo e navegável do laboratório de pesquisa "Mundos Artifici
 - screenshots: hero (PT/EN), choque de liquidez, equipe + modal, publicações, mobile 375px, login admin → dashboard
 
 ## Credenciais
-- admin@maf.ufrj.br / MAF-Lab#2026! (ver /app/memory/test_credentials.md)
+- admin@maf.ufrj.br / <ADMIN_PASSWORD> (ver /app/memory/test_credentials.md)
 
 ## Implementado (2026-07-14 — rodada 2)
 - Página dedicada /simulacao: micromercado artificial com sliders (população de agentes 40–400, volatilidade 0.2–2.5×), 5 cenários (Calmo, Bolha, Choque, Pânico, Recuperação) e telemetria ao vivo (preço, variação %, regime)

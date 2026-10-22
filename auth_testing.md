@@ -2,7 +2,7 @@
 
 ## 1) Email/senha (JWT custom)
 
-Admin seeded at startup from env: ADMIN_EMAIL=admin@maf.ufrj.br / ADMIN_PASSWORD=MAF-Lab#2026!
+Admin seeded at startup from env: ADMIN_EMAIL=admin@maf.ufrj.br / ADMIN_PASSWORD=<ADMIN_PASSWORD>
 
 ### MongoDB
 ```
@@ -15,7 +15,7 @@ Verify: bcrypt hash starts with `$2b$`, unique index on users.email, index on lo
 ### API
 ```
 API=$(grep REACT_APP_BACKEND_URL /app/frontend/.env | cut -d '=' -f2)
-curl -c /tmp/cookies.txt -X POST $API/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@maf.ufrj.br","password":"MAF-Lab#2026!"}'
+curl -c /tmp/cookies.txt -X POST $API/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@maf.ufrj.br","password":"<ADMIN_PASSWORD>"}'
 curl -b /tmp/cookies.txt $API/api/auth/me
 ```
 Login returns the user object and sets access_token + refresh_token cookies; /me returns the same user.

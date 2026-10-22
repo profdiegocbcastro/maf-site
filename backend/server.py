@@ -24,7 +24,12 @@ mongo_url = os.environ["MONGO_URL"]
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ["DB_NAME"]]
 
-app = FastAPI(title="MAF API", docs_url="/api/docs", openapi_url="/api/openapi.json")
+# Swagger fica desligado em produção; ENABLE_DOCS=true reativa
+_docs = os.environ.get("ENABLE_DOCS", "false").lower() == "true"
+app = FastAPI(title="MAF API",
+              docs_url="/api/docs" if _docs else None,
+              redoc_url=None,
+              openapi_url="/api/openapi.json" if _docs else None)
 api_router = APIRouter(prefix="/api")
 
 JWT_ALGORITHM = "HS256"
@@ -62,7 +67,8 @@ def create_refresh_token(user_id: str) -> str:
 
 
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "true").lower() == "true"
-COOKIE_SAMESITE = "none" if COOKIE_SECURE else "lax"
+# Front e API no mesmo domínio (via Nginx): Lax basta e protege contra CSRF
+COOKIE_SAMESITE = os.environ.get("COOKIE_SAMESITE", "lax").lower()
 
 
 def set_auth_cookies(response: Response, access: str, refresh: str):
@@ -614,8 +620,10 @@ app.add_middleware(
 # ---------- Seeds ----------
 
 async def seed_admin():
-    email = os.environ.get("ADMIN_EMAIL", "admin@example.com").lower()
-    password = os.environ.get("ADMIN_PASSWORD", "admin123")
+    email = os.environ.get("ADMIN_EMAIL", "").lower()
+    password = os.environ.get("ADMIN_PASSWORD", "")
+    if not email or len(password) < 12:
+        raise RuntimeError("ADMIN_EMAIL e ADMIN_PASSWORD (mín. 12 caracteres) são obrigatórios")
     existing = await db.users.find_one({"email": email})
     if existing is None:
         await db.users.insert_one({
@@ -623,7 +631,7 @@ async def seed_admin():
             "role": "admin", "password_hash": hash_password(password),
             "created_at": datetime.now(timezone.utc).isoformat(),
         })
-    elif not verify_password(password, existing["password_hash"]):
+    elif not existing.get("password_hash") or not verify_password(password, existing["password_hash"]):
         await db.users.update_one({"email": email}, {"$set": {"password_hash": hash_password(password)}})
 
 

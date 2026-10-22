@@ -4,7 +4,7 @@
 
 ## MAF Admin (painel /admin)
 - Email: fuschilo@gmail.com
-- Senha: MAF-Lab#2026!
+- Senha: (definida em ADMIN_PASSWORD no backend/.env do servidor — nunca versionar)
 - Papel: admin
 - Login: POST /api/auth/login (cookies httpOnly access_token + refresh_token)
 - Rotas do painel: /admin/login (login) e /admin (dashboard: notícias, publicações, mensagens)
